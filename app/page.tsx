@@ -8,6 +8,9 @@ import { computeMetrics } from "@/lib/metrics";
 import { readMetricsCache, writeMetricsCache } from "@/lib/cache";
 import type { Metrics } from "@/lib/types";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 async function getMetrics() {
   try {
     const useMock = !process.env.THREADS_ACCESS_TOKEN;

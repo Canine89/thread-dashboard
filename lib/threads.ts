@@ -17,21 +17,18 @@ async function apiGet<T = unknown>(
   params: Record<string, string | number> = {}
 ): Promise<T> {
   assertEnv();
-  const q = new URLSearchParams({
-    access_token: ACCESS_TOKEN,
-    ...Object.fromEntries(
-      Object.entries(params).map(([k, v]) => [k, String(v)])
-    ),
+  const q = new URLSearchParams(
+    Object.fromEntries(Object.entries(params).map(([k, v]) => [k, String(v)]))
+  );
+  const base = `${BASE_URL.replace(/\/$/, "")}/${path.replace(/^\//, "")}`;
+  const url = q.toString() ? `${base}?${q.toString()}` : base;
+
+  const res = await fetch(url, {
+    cache: "no-store",
+    headers: {
+      Authorization: `Bearer ${ACCESS_TOKEN}`,
+    },
   });
-  const url = `${BASE_URL.replace(/\/$/, "")}/${path.replace(/^\//, "")}?${q.toString()}`;
-  
-  console.log("Threads API Request:", {
-    url: url.replace(ACCESS_TOKEN, "***TOKEN***"),
-    path,
-    params
-  });
-  
-  const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) {
     const text = await res.text();
     console.error("Threads API Error:", {
